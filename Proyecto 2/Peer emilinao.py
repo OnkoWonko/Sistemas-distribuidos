@@ -2,6 +2,7 @@ import customtkinter as ctk
 import socket
 import threading
 import time
+import verificar
 
 MI_NOMBRE = "Emiliano"  
 MI_IP = "127.0.0.1"     
@@ -9,6 +10,9 @@ PORT = 5000
 BUFF = 1024
 REINTENTO = 5
 MAX_INTENTOS = 3
+verificador=""
+
+objeto =verificar
 
 
 PEERS = {
@@ -20,6 +24,7 @@ PEERS = {
 connections = {}   
 chat_windows = {}   
 connections_lock = threading.Lock()
+
 
 
 # Funciones de conexión
@@ -152,6 +157,10 @@ def enviar_mensaje(nombre, entry, chat_box):
 # =====================
 # INTERFAZ
 # =====================
+
+
+
+
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("green")
 
@@ -233,6 +242,40 @@ for nombre in PEERS.keys():
     )
     contact_btn.pack(pady=5)
 
+def mostrar_alerta(titulo, mensaje):
+    alerta = ctk.CTkToplevel()
+    alerta.title(titulo)
+    alerta.geometry("300x150")
+    alerta.grab_set()
+
+    label = ctk.CTkLabel(alerta, text=mensaje, wraplength=250, font=("Arial", 13))
+    label.pack(pady=20)
+
+    def cerrar_todo():
+        alerta.destroy()
+        root.destroy()
+
+    btn = ctk.CTkButton(alerta, text="Aceptar", command=cerrar_todo)
+    btn.pack(pady=10)
+    alerta.mainloop()
+
+    
+
 threading.Thread(target=servidor, args=(actualizar_chat,), daemon=True).start()
 
-root.mainloop()
+
+verificador=objeto.verificar_cliente(verificador,MI_IP)
+print(verificador)
+verificador=verificador.strip()
+print("VERIFICADOR ",verificador)
+
+if verificador=="T":
+    root.mainloop()   
+else:
+    mostrar_alerta("Acceso Denegado", "No tienes permiso para usar esta aplicación.")
+    
+    
+    
+
+
+
